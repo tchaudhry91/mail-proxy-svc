@@ -26,5 +26,5 @@ func (mail *Email) GetSenderDomain() (string, error) {
 }
 
 type Mailer interface {
-	SendMail(mail Email) (err error, response string)
+	SendMail(mail Email) (string, error)
 }
