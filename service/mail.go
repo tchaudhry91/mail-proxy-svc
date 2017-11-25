@@ -7,7 +7,7 @@ import (
 
 // MailService is a generic mail proxying service which can send email via various backends
 type MailService interface {
-	SendEmail(ctx context.Context, From string, Subject string, Message string, To string) (string, error)
+	SendEmail(ctx context.Context, from string, subject string, message string, to string) (string, error)
 }
 
 type mailService struct {
@@ -18,28 +18,38 @@ type mailService struct {
 
 // Configuration is a struct to maintain provider config in a single place
 type Configuration struct {
-	senderDomain  string
-	privateAPIKey string
-	publicAPIKey  string
+	SenderDomain  string
+	PrivateAPIKey string
+	PublicAPIKey  string
 }
 
 func (svc *mailService) InitializePrimaryProvider() {
 	switch svc.primaryProvider {
 	case "mailgun":
 		svc.mailProvider = mailer.NewMailgunMailer(
-			svc.config.senderDomain,
-			svc.config.privateAPIKey,
-			svc.config.publicAPIKey,
+			svc.config.SenderDomain,
+			svc.config.PrivateAPIKey,
+			svc.config.PublicAPIKey,
 		)
 	}
 }
 
-func (svc *mailService) SendEmail(ctx context.Context, From string, Subject string, Message string, To string) (string, error) {
+// NewMailService is a constructor for the mailService
+func NewMailService(primaryProvider string, config Configuration) MailService {
+	svc := mailService{
+		primaryProvider: primaryProvider,
+		config:          config,
+	}
+	svc.InitializePrimaryProvider()
+	return svc
+}
+
+func (svc mailService) SendEmail(ctx context.Context, from string, subject string, message string, to string) (string, error) {
 	email := mailer.Email{
-		From:    From,
-		Subject: Subject,
-		Message: Message,
-		To:      To,
+		From:    from,
+		Subject: subject,
+		Message: message,
+		To:      to,
 	}
 	resp, err := svc.mailProvider.SendMail(email)
 	return resp, err
