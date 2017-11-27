@@ -28,6 +28,7 @@ before_script:
   - go get github.com/fzipp/gocyclo
   - go get -t github.com/tchaudhry91/mail-proxy-svc/mailer
   - go get -t github.com/tchaudhry91/mail-proxy-svc/service
+  - go get -t github.com/tchaudhry91/mail-proxy-svc/cmd
 
 # script always run to completion (set +e). All of these code checks are must haves
 # in a modern Go project.
