@@ -5,7 +5,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/go-kit/kit/log"
+	kitprom "github.com/go-kit/kit/metrics/prometheus"
 	"github.com/gorilla/mux"
+	stdprom "github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/tchaudhry91/mail-proxy-svc/service"
 	"net/http"
 	"os"
@@ -69,14 +72,42 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
-	logger := log.NewJSONLogger(os.Stderr)
-	router := mux.NewRouter()
 
+	// Base service
 	svc := service.NewMailService(primaryProvider, config)
+
+	// Logging Middleware
+	logger := log.NewJSONLogger(os.Stderr)
 	svc = service.NewLoggingMiddleware(logger, svc)
+
+	// Prometheus Middleware
+	fieldKeys := []string{"method", "error", "to", "from", "subject"}
+	emailCount := kitprom.NewCounterFrom(
+		stdprom.CounterOpts{
+			Namespace: "mail_service",
+			Name:      "email_count_total",
+			Help:      "Total Emails Requested",
+		},
+		fieldKeys,
+	)
+	requestDuration := kitprom.NewSummaryFrom(
+		stdprom.SummaryOpts{
+			Namespace: "mail_service",
+			Name:      "email_processing_seconds",
+			Help:      "Time taken per request",
+		},
+		fieldKeys,
+	)
+	svc = service.NewInstrumentingMiddleware(emailCount, requestDuration, svc)
+
+	// Go-Kit Endpoint
 	endpoint := service.MakeSendEmailEndpoint(svc)
+
+	// Request Router + Transport
+	router := mux.NewRouter()
 	service.MakeSendEmailHandler(endpoint, router)
 
+	http.Handle("/metrics", promhttp.Handler())
 	http.Handle("/", router)
 
 	logger.Log("msg", "HTTP", "addr", serverAddr)
