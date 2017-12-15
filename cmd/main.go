@@ -107,11 +107,10 @@ func main() {
 	router := mux.NewRouter()
 	service.MakeSendEmailHandler(endpoint, router)
 
-	http.Handle("/metrics", promhttp.Handler())
-	http.Handle("/", router)
+	router.Methods("GET").Path("/metrics").Handler(promhttp.Handler())
 
 	logger.Log("msg", "HTTP", "addr", serverAddr)
-	logger.Log("err", http.ListenAndServe(serverAddr, nil))
+	logger.Log("err", http.ListenAndServe(serverAddr, router))
 }
 
 func validateConfig(primaryProvider string, config service.Configuration) error {
