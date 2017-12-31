@@ -5,7 +5,8 @@
 A simple mail proxying service that proxies mail through popular email providers.
 
 Supported Providers:
-- Mailgun (in progress)
+- Mailgun
+- TBD
 
 Tanmay Chaudhry
 

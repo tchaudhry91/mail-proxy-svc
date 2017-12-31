@@ -81,7 +81,7 @@ func main() {
 	svc = service.NewLoggingMiddleware(logger, svc)
 
 	// Prometheus Middleware
-	fieldKeys := []string{"method", "error", "to", "from", "subject"}
+	fieldKeys := []string{"method", "error", "to", "from", "subject", "html"}
 	emailCount := kitprom.NewCounterFrom(
 		stdprom.CounterOpts{
 			Namespace: "mail_service",

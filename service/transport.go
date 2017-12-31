@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
@@ -38,6 +39,7 @@ func MakeSendEmailHandler(e endpoint.Endpoint, r *mux.Router) {
 func decodeSendEmailRequest(_ context.Context, r *http.Request) (interface{}, error) {
 	var request sendEmailRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		fmt.Println(err)
 		return nil, ErrJSONUnmarshall
 	}
 	return request, nil

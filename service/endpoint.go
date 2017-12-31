@@ -10,6 +10,7 @@ type sendEmailRequest struct {
 	Subject string `json:"subject"`
 	Message string `json:"message"`
 	To      string `json:"to"`
+	HTML    bool   `json:"html"`
 }
 
 type sendEmailResponse struct {
@@ -21,7 +22,7 @@ type sendEmailResponse struct {
 func MakeSendEmailEndpoint(svc MailService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(sendEmailRequest)
-		respString, err := svc.SendEmail(ctx, req.From, req.Subject, req.Message, req.To)
+		respString, err := svc.SendEmail(ctx, req.From, req.Subject, req.Message, req.To, req.HTML)
 		if err != nil {
 			return sendEmailResponse{
 				Response: respString,

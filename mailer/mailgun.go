@@ -37,6 +37,9 @@ func (mailer MailGunMailer) SendMail(mail Email) (string, error) {
 		mail.Message,
 		mail.To,
 	)
+	if mail.HTML {
+		message.SetHtml(mail.Message)
+	}
 	resp, id, err := mg.Send(message)
 	if err != nil {
 		return "", err

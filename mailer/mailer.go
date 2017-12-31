@@ -11,6 +11,7 @@ type Email struct {
 	Subject string
 	Message string
 	To      string
+	HTML    bool
 }
 
 // ErrInvalidDomain is returned when an invalid domain is specified for sending

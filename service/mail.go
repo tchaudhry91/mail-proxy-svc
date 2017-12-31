@@ -7,7 +7,7 @@ import (
 
 // MailService is a generic mail proxying service which can send email via various backends
 type MailService interface {
-	SendEmail(ctx context.Context, from string, subject string, message string, to string) (string, error)
+	SendEmail(ctx context.Context, from string, subject string, message string, to string, html bool) (string, error)
 }
 
 type mailService struct {
@@ -44,12 +44,13 @@ func NewMailService(primaryProvider string, config Configuration) MailService {
 	return svc
 }
 
-func (svc mailService) SendEmail(ctx context.Context, from string, subject string, message string, to string) (string, error) {
+func (svc mailService) SendEmail(ctx context.Context, from string, subject string, message string, to string, html bool) (string, error) {
 	email := mailer.Email{
 		From:    from,
 		Subject: subject,
 		Message: message,
 		To:      to,
+		HTML:    html,
 	}
 	resp, err := svc.mailProvider.SendMail(email)
 	return resp, err
