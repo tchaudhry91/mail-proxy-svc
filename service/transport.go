@@ -19,6 +19,19 @@ var (
 	ErrInvalidInput = errors.New("bad input, please recheck")
 )
 
+type sendEmailRequest struct {
+	From    string `json:"from"`
+	Subject string `json:"subject"`
+	Message string `json:"message"`
+	To      string `json:"to"`
+	HTML    bool   `json:"html"`
+}
+
+type sendEmailResponse struct {
+	Response string `json:"response"`
+	Error    string `json:"err,omitempty"`
+}
+
 // MakeSendEmailHandler populates the http.Handler with the go-kit endpoint routes
 func MakeSendEmailHandler(e endpoint.Endpoint, r *mux.Router) {
 	options := []httptransport.ServerOption{
