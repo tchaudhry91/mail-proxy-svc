@@ -1,3 +1,5 @@
 *.out
 samples/*
 *.swp
+temp_build/*
+credentials/*
