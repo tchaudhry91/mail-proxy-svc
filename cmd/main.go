@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 // ErrInvalidConfiguration is thrown when incorrect startup parameters have been supplied
@@ -109,7 +110,7 @@ func main() {
 
 	router.Methods("GET").Path("/metrics").Handler(promhttp.Handler())
 
-	logger.Log("msg", "HTTP", "addr", serverAddr)
+	logger.Log("timestamp", time.Now(), "msg", "HTTP Server Working", "addr", serverAddr)
 	logger.Log("err", http.ListenAndServe(serverAddr, router))
 }
 

@@ -16,6 +16,7 @@ type LoggingMiddleware struct {
 func (mw LoggingMiddleware) SendEmail(ctx context.Context, from string, subject string, message string, to string, html bool) (response string, err error) {
 	defer func(begin time.Time) {
 		mw.logger.Log(
+			"timestamp", time.Now(),
 			"method", "SendEmail",
 			"from", from,
 			"subject", subject,
